@@ -25,10 +25,10 @@ import java.math.BigInteger;
  *
  * @author Jin Kwon <onacit at gmail.com>
  */
-public class FibonacciSeries {
+public class FibonacciNumbers {
 
 
-    public static long f1(final int n) {
+    public static long f0(final int n) {
 
         if (n < 0) {
             throw new IllegalArgumentException("n(" + n + ") < 0");
@@ -40,12 +40,12 @@ public class FibonacciSeries {
             case 1:
                 return 1L;
             default:
-                return f1(n - 2) + f1(n - 1);
+                return f0(n - 2) + f0(n - 1);
         }
     }
 
 
-    public static long f2(final int n, final Long[] s) {
+    private static long f1(final int n, final Long[] s) {
 
         if (n < 0) {
             throw new IllegalArgumentException("n(" + n + ") < 0");
@@ -60,8 +60,6 @@ public class FibonacciSeries {
                 "n(" + n + ") >= s.length(" + s.length + ")");
         }
 
-        assert n >= 0;
-
         switch (n) {
             case 0:
                 if (s[0] == null) {
@@ -75,14 +73,14 @@ public class FibonacciSeries {
                 return s[1];
             default:
                 if (s[n] == null) {
-                    s[n] = f2(n - 2, s) + f2(n - 1, s);
+                    s[n] = f1(n - 2, s) + f1(n - 1, s);
                 }
                 return s[n];
         }
     }
 
 
-    public static BigInteger f3(final int n, final BigInteger[] s) {
+    public static BigInteger f2(final int n, final BigInteger[] s) {
 
         if (n < 0) {
             throw new IllegalArgumentException("n(" + n + ") < 0");
@@ -110,43 +108,43 @@ public class FibonacciSeries {
                 return s[1];
             default:
                 if (s[n] == null) {
-                    s[n] = f3(n - 2, s).add(f3(n - 1, s));
+                    s[n] = f2(n - 2, s).add(f2(n - 1, s));
                 }
                 return s[n];
         }
     }
 
 
-    private static BigInteger f4(final int n, final BigInteger f_n_1,
-                                 final BigInteger f_n_2) {
+    private static BigInteger f3(final int n, final BigInteger fn_1,
+                                 final BigInteger fn_2) {
 
         if (n < 0) {
             throw new IllegalArgumentException("n(" + n + ") < 0");
         }
 
-        if (f_n_1 == null) {
-            throw new NullPointerException("null f_n_1");
+        if (fn_1 == null) {
+            throw new NullPointerException("null fn_1");
         }
 
-        if (f_n_2 == null) {
+        if (fn_2 == null) {
             throw new NullPointerException("null fn_2");
         }
 
         if (n == 0) {
-            return f_n_2;
+            return fn_2;
         }
 
-        return f4(n - 1, f_n_1.add(f_n_2), f_n_1);
+        return f3(n - 1, fn_1.add(fn_2), fn_1);
+    }
+
+
+    public static BigInteger f3(final int n) {
+
+        return f3(n, BigInteger.ONE, BigInteger.ZERO);
     }
 
 
     public static BigInteger f4(final int n) {
-
-        return f4(n, BigInteger.ONE, BigInteger.ZERO);
-    }
-
-
-    public static BigInteger f5(final int n) {
 
         if (n < 0) {
             throw new IllegalArgumentException("n(" + n + ") < 0");
@@ -166,6 +164,49 @@ public class FibonacciSeries {
     }
 
 
+    private static void m0(final String[] args) {
+
+        final int m = 50;
+        for (int n = 0; n < m; n++) {
+            System.out.printf("f(%1$d) = %2$d\n", n, f0(n));
+        }
+    }
+
+
+    public static void m1(final String[] args) {
+
+        final int m = 100;
+        final Long[] s = new Long[m];
+        for (int n = 0; n < m; n++) {
+            System.out.printf("f(%1$d) = %2$d\n", n, f1(n, s));
+        }
+    }
+
+
+    private static void m2(final String[] args) {
+
+        final int m = 100;
+        final BigInteger[] s = new BigInteger[m];
+        for (int n = 0; n < m; n++) {
+            System.out.printf("f(%1$d) = %2$d\n", n, f2(n, s));
+        }
+    }
+
+
+    private static void m3(final String[] args) {
+
+        final int n = 10000;
+        System.out.printf("f(%1$d) = %2$d\n", n, f3(n));
+    }
+
+
+    private static void m4(final String[] args) {
+
+        final int n = 10000;
+        System.out.printf("f(%1$d) = %2$d\n", n, f4(n));
+    }
+
+
     /**
      *
      * @param args
@@ -173,62 +214,23 @@ public class FibonacciSeries {
     public static void main(final String[] args) {
 
         if (false) {
-            final int m = 50;
-            for (int n = 0; n < m; n++) {
-                System.out.printf("f(%1$d) = %2$d\n", n, f1(n));
-            }
+            m0(args);
+        }
+
+        if (false) {
+            m1(args);
         }
 
         if (true) {
-            final int m = 100;
-            final Long[] s = new Long[m];
-            for (int n = 0; n < m; n++) {
-                System.out.printf("f(%1$d) = %2$d\n", n, f2(n, s));
-            }
+            m2(args);
+        }
+
+        if (false) {
+            m3(args);
         }
 
         if (true) {
-            {
-                final int m = 100;
-                final BigInteger[] s = new BigInteger[m];
-                for (int n = 0; n < m; n++) {
-                    System.out.printf("f(%1$d) = %2$d\n", n, f3(n, s));
-                }
-            }
-            {
-                final int n = 10000;
-                final BigInteger[] s = new BigInteger[n + 1];
-                System.out.printf("f(%1$d) = %2$d\n", n, f3(n, s));
-                System.out.printf("f(%1$d).bytes.length: %2$d\n",
-                                  n, f3(n, s).toByteArray().length);
-            }
-        }
-
-        if (true) {
-            {
-                final int n = 1000;
-                final BigInteger fn = f4(n);
-                System.out.printf("f(%1$d) = %2$d\n", n, fn);
-                System.out.printf("f(%1$d).bytes.length: %2$d\n",
-                                  n, fn.toByteArray().length);
-            }
-        }
-
-        if (true) {
-            {
-                final int n = 1000;
-                final BigInteger fn = f5(n);
-                System.out.printf("f(%1$d) = %2$d\n", n, fn);
-                System.out.printf("f(%1$d).bytes.length: %2$d\n",
-                                  n, fn.toByteArray().length);
-            }
-            {
-                final int n = 100000;
-                final BigInteger fn = f5(n);
-                System.out.printf("f(%1$d) = %2$d\n", n, fn);
-                System.out.printf("f(%1$d).bytes.length: %2$d\n",
-                                  n, fn.toByteArray().length);
-            }
+            m4(args);
         }
     }
 
